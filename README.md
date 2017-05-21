@@ -4,11 +4,15 @@
 
 ### 16 de marzo
 Analizar la deducción de la cópula subyacente en el Ejemplo 3.3 del libro de Nelsen y calcular en función del parámetro de dicha cópula las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely. Luego graficar juntas todas las medidas de dependencia y concordancia como funciones del parámetro.
+
 ```R
+#Cargar librería "cubature" para integrar
 install.packages("cubature")
-library(cubature) # load the package "cubature"
+library(cubature)
+```
 
-
+Medida de dependencia Schweizer-Wolff:
+```R
 Medida1<-function(a)
 {
   SW<-function(x) 
@@ -18,22 +22,14 @@ Medida1<-function(a)
       if(a<=1-(1-a)*x[2] && 1-(1-a)*x[2]<=x[1] && x[1]<=1) C<-x[1]+x[2]-1
       abs(C-x[1]*x[2])
     }
-   # 
-   # Medida1<-0
-   # linea<-seq(0,1,.01)
-   # for(i in 1:length(linea)) 
-   #   for(j in 1:length(linea))
-   #     Medida1<-Medida1+SW(linea[i],linea[j])
-   # 
-   # return(Medida1*12*.01*.01)
-   # 
+
   12*adaptIntegrate(SW, lowerLimit = c(0, 0), upperLimit = c(1, 1),maxEval=500)$integral
 }
 
 Medida1a<-Vectorize(Medida1)
-curve(Medida1a,0,1)
-
+curve(Medida1a,0,1,xname="SW",xlab="Medida de dependencia Schweizer-Wolff")
 ```
+![SW](images/Medida1.png)
 
 ```R
 
