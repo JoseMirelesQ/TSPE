@@ -193,7 +193,10 @@ yi<-vector(mode='numeric',length = length(ui))
 for(i in 1:length(ui)) yi[i]<-FV_inv(vi[i],xi[i])
 
 plot(ui,yi)
+```
+![Copula](images/cop1.png)
 
+```R
 concor<-sum(outer(yi,yi,function(x,y) x-y)*outer(ui,ui,function(x,y) x-y)>0)
 discor<-sum(outer(yi,yi,function(x,y) x-y)*outer(ui,ui,function(x,y) x-y)<0)
 
