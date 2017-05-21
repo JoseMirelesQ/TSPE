@@ -68,7 +68,7 @@ Medida3<-function(a)
   }
 
 Medida3a<-Vectorize(Medida3)
-curve(Medida3a,0,1,n=300)
+curve(Medida3a,0,1,n=300,xname="Sup",xlab="Medida de dependencia Supremo")
 ```
 ![SW](images/Medida3.png)
 
@@ -85,7 +85,7 @@ Concordancia1<-function(a)
 }
 
 Concordancia1a<-Vectorize(Concordancia1)
-curve(Concordancia1a,0,1)
+curve(Concordancia1a,0,1,xname="K",xlab="Medida de concordancia Kendall")
 ```
 ![SW](images/Concordancia1.png)
 
@@ -105,7 +105,7 @@ Concordancia2<-function(a)
 }
 
 Concordancia2a<-Vectorize(Concordancia2)
-curve(Concordancia2a,0,1)
+curve(Concordancia2a,0,1,xname="Sp",xlab="Medida de concordancia Spearman")
 ```
 ![SW](images/Concordancia2.png)
 
@@ -128,8 +128,7 @@ Concordancia3<-function(a)
 }
 
 Concordancia3a<-Vectorize(Concordancia3)
-curve(Concordancia3a,0,1)
-
+curve(Concordancia3a,0,1,xname="Er",xlab="Medida de concordancia Erdely")
 ```
 ![SW](images/Concordancia3.png)
 
