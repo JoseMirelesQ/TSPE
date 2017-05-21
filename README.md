@@ -118,7 +118,7 @@ Concordancia3a<-Vectorize(Concordancia3)
 curve(Concordancia3a,0,1)
 
 ```
-![tabla](images/primas.png)
+![tabla](images/plot1.png)
 
 
 
