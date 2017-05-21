@@ -135,6 +135,7 @@ curve(Concordancia3a,0,1,xname="Er",xlab="Medida de concordancia Erdely")
 
 ### 17 de marzo
 Considere un vector aleatorio (X,Y) con función de densidad conjunta de probabilidades del Ejemplo 1.7 de las notas sobre vectores aleatorios. Programando en R:
+
 a) Simule una muestra aleatoria de (X,Y) de tamaño n = 3000 y realice un gráfico de dispersión.
 ```R
 ui<-runif(3000,0,1)
@@ -143,6 +144,8 @@ vi<-runif(3000,0,1)
 yi<-xi-log(1-vi)
 plot(xi,yi)
 ```
+![Copula](images/cop2.png)
+
 b) Con los valores simulados de X obtenga un histograma en la escala adecuada para que encima grafique la densidad teórica marginal de X. Lo mismo para Y.
 
 c) Obtenga gráficas de los conjuntos de nivel de la cópula subyacente C mediante las funciones contour e image.
