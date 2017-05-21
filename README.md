@@ -47,8 +47,9 @@ Medida2<-function(a)
 }
 
 Medida2a<-Vectorize(Medida2)
-curve(Medida2a,0,1)
+curve(Medida2a,0,1,xname="H",xlab="Medida de dependencia Hoeffding")
 ```
+![H](images/Medida2.png)
 
 ```R
 Medida3<-function(a)
