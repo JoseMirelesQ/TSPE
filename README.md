@@ -70,6 +70,7 @@ Medida3<-function(a)
 Medida3a<-Vectorize(Medida3)
 curve(Medida3a,0,1,n=300)
 ```
+![SW](images/Medida3.png)
 
 Medida de concordancia de Kendall:
 ```R
@@ -86,6 +87,7 @@ Concordancia1<-function(a)
 Concordancia1a<-Vectorize(Concordancia1)
 curve(Concordancia1a,0,1)
 ```
+![SW](images/Concordancia1.png)
 
 Medida de concordancia de Spearman:
 ```R
@@ -105,6 +107,7 @@ Concordancia2<-function(a)
 Concordancia2a<-Vectorize(Concordancia2)
 curve(Concordancia2a,0,1)
 ```
+![SW](images/Concordancia2.png)
 
 Medida de concordancia de Erdely:
 ```R
@@ -128,8 +131,7 @@ Concordancia3a<-Vectorize(Concordancia3)
 curve(Concordancia3a,0,1)
 
 ```
-![tabla](images/plot1.png)
-
+![SW](images/Concordancia3.png)
 
 
 ### 17 de marzo
