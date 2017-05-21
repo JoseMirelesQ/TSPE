@@ -33,6 +33,9 @@ Medida1<-function(a)
 Medida1a<-Vectorize(Medida1)
 curve(Medida1a,0,1)
 
+```
+
+```R
 
 Medida2<-function(a)
 { 
@@ -49,8 +52,9 @@ Medida2<-function(a)
 
 Medida2a<-Vectorize(Medida2)
 curve(Medida2a,0,1)
+```
 
-
+```R
 Medida3<-function(a)
 { 
   Supremo<-function(x) 
@@ -66,7 +70,9 @@ Medida3<-function(a)
 
 Medida3a<-Vectorize(Medida3)
 curve(Medida3a,0,1,n=300)
+```
 
+```R
 #Concordancia1
 Concordancia1<-function(a)
 {
@@ -79,8 +85,9 @@ Concordancia1<-function(a)
 
 Concordancia1a<-Vectorize(Concordancia1)
 curve(Concordancia1a,0,1)
+```
 
-
+```R
 Concordancia2<-function(a)
 {
   Sp<-function(x) 
@@ -96,8 +103,9 @@ Concordancia2<-function(a)
 
 Concordancia2a<-Vectorize(Concordancia2)
 curve(Concordancia2a,0,1)
+```
 
-
+```R
 Concordancia3<-function(a)
 { 
   Erdely1<-function(x) 
@@ -125,10 +133,6 @@ curve(Concordancia3a,0,1)
 ### 17 de marzo
 Considere un vector aleatorio (X,Y) con función de densidad conjunta de probabilidades del Ejemplo 1.7 de las notas sobre vectores aleatorios. Programando en R:
 a) Simule una muestra aleatoria de (X,Y) de tamaño n = 3000 y realice un gráfico de dispersión.
-b) Con los valores simulados de X obtenga un histograma en la escala adecuada para que encima grafique la densidad teórica marginal de X. Lo mismo para Y.
-c) Obtenga gráficas de los conjuntos de nivel de la cópula subyacente C mediante las funciones contour e image.
-d) Igual que en el inciso anterior pero de C(u,v) - uv.
-e) Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
 ```R
 #a) Simule una muestra aleatoria de (X,Y) de tamaño n = 3000
 #y realice un gráfico de dispersión.
@@ -137,7 +141,12 @@ xi<--log(1-ui)
 vi<-runif(3000,0,1)
 yi<-xi-log(1-vi)
 plot(xi,yi)
-
+```
+b) Con los valores simulados de X obtenga un histograma en la escala adecuada para que encima grafique la densidad teórica marginal de X. Lo mismo para Y.
+c) Obtenga gráficas de los conjuntos de nivel de la cópula subyacente C mediante las funciones contour e image.
+d) Igual que en el inciso anterior pero de C(u,v) - uv.
+e) Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
+```R
 #b) Con los valores simulados de X obtenga un histograma en la 
 #escala adecuada para que encima grafique la densidad teórica 
 #marginal de X. Lo mismo para Y.
@@ -191,19 +200,4 @@ Lo mismo del ejercicio anterior pero para (X,Y) pero con distribuciones marginal
 #Código
 ```
 ![tabla](images/edad.png)
-
-----------------------------------------------------
-
-
-Dist.   | Hombres |        | Mujeres  |        |
---------|---------|--------|----------|---------
-        |Mean     | SD     | Mean     | SD
-Normal  |1000     |99.89995|1500      |149.8499 
-        |location |  scale |location  |scale
-Logistic|1000.7258|56.9268 |1500.69773|85.52088
-
-Par.\Dist.| Normal | Logistica
-----------|--------|--------
-     a    |  1000  |1000.5809
-     b    |99.89995|56.9967
        
