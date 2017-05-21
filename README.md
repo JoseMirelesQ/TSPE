@@ -31,6 +31,7 @@ curve(Medida1a,0,1,xname="SW",xlab="Medida de dependencia Schweizer-Wolff")
 ```
 ![SW](images/Medida1.png)
 
+Medida de dependencia Hoeffding:
 ```R
 
 Medida2<-function(a)
@@ -51,6 +52,7 @@ curve(Medida2a,0,1,xname="H",xlab="Medida de dependencia Hoeffding")
 ```
 ![H](images/Medida2.png)
 
+Medida de dependencia distancia supremo:
 ```R
 Medida3<-function(a)
 { 
@@ -69,6 +71,7 @@ Medida3a<-Vectorize(Medida3)
 curve(Medida3a,0,1,n=300)
 ```
 
+Medida de concordancia de Kendall:
 ```R
 #Concordancia1
 Concordancia1<-function(a)
@@ -84,6 +87,7 @@ Concordancia1a<-Vectorize(Concordancia1)
 curve(Concordancia1a,0,1)
 ```
 
+Medida de concordancia de Spearman:
 ```R
 Concordancia2<-function(a)
 {
@@ -102,6 +106,7 @@ Concordancia2a<-Vectorize(Concordancia2)
 curve(Concordancia2a,0,1)
 ```
 
+Medida de concordancia de Erdely:
 ```R
 Concordancia3<-function(a)
 { 
@@ -131,8 +136,6 @@ curve(Concordancia3a,0,1)
 Considere un vector aleatorio (X,Y) con función de densidad conjunta de probabilidades del Ejemplo 1.7 de las notas sobre vectores aleatorios. Programando en R:
 a) Simule una muestra aleatoria de (X,Y) de tamaño n = 3000 y realice un gráfico de dispersión.
 ```R
-#a) Simule una muestra aleatoria de (X,Y) de tamaño n = 3000
-#y realice un gráfico de dispersión.
 ui<-runif(3000,0,1)
 xi<--log(1-ui)
 vi<-runif(3000,0,1)
@@ -187,6 +190,10 @@ for(i in 1:length(ui)) yi[i]<-FV_inv(vi[i],xi[i])
 
 plot(ui,yi)
 
+concor<-sum(outer(yi,yi,function(x,y) x-y)*outer(ui,ui,function(x,y) x-y)>0)
+discor<-sum(outer(yi,yi,function(x,y) x-y)*outer(ui,ui,function(x,y) x-y)<0)
+
+(concor-discor)/(concor+discor)
 
 ```
 ![tabla](images/edad.png)
