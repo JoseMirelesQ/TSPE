@@ -144,8 +144,11 @@ yi<-xi-log(1-vi)
 plot(xi,yi)
 ```
 b) Con los valores simulados de X obtenga un histograma en la escala adecuada para que encima grafique la densidad teórica marginal de X. Lo mismo para Y.
+
 c) Obtenga gráficas de los conjuntos de nivel de la cópula subyacente C mediante las funciones contour e image.
+
 d) Igual que en el inciso anterior pero de C(u,v) - uv.
+
 e) Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
 ```R
 #b) Con los valores simulados de X obtenga un histograma en la 
