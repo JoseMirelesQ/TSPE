@@ -265,29 +265,45 @@ for(i in 1:length(linea))
 {
   cop[,i] <- sapply(linea,FUN=cop.sub, x=linea[i])
 }
+```
 
-## Schweizer-Wolff:
-SW <- 12*sum(abs(cop-outer(linea,linea))*0.01^2)
-SW
-## Hoeffding:
-H <- sqrt(90*sum((cop-outer(linea,linea))^2)*0.01^2)
-H
-## Distancia supremo:
-DS <- 4*max(abs(cop-outer(linea,linea)))
-DS
+Medida de dependencia Schweizer-Wolff:
+```R
+(SW <- 12*sum(abs(cop-outer(linea,linea))*0.01^2))
+```
+![tabla](images/2SW.png)
 
-## Kendall:
+Medida de dependencia Hoeffding:
+```R
+(Hoeffding  <- sqrt(90*sum((cop-outer(linea,linea))^2)*0.01^2))
+```
+![tabla](images/2Hoeffding.png)
+
+Medida de dependencia distancia supremo:
+```R
+(Supremo <- 4*max(abs(cop-outer(linea,linea))))
+```
+![tabla](images/2Supremo.png)
+
+Medida de concordancia de Kendall Muestral:
+```R
 concor<-sum(outer(xi,xi,function(x,y) x-y)*outer(yi,yi,function(x,y) x-y)>0)
 discor<-sum(outer(xi,xi,function(x,y) x-y)*outer(yi,yi,function(x,y) x-y)<0)
-K <- (concor-discor)/(concor+discor)
-K
-## Spearman:
-S <- 12*sum(cop-outer(linea,linea))*0.01^2
-S
-## Erdely:
-E <- 4*(max(cop-outer(linea,linea))-max(outer(linea,linea)-cop))
-E
+(Kendall.Muestral <- (concor-discor)/(concor+discor))
 ```
+![tabla](images/2Kendall.png)
+
+Medida de concordancia de Spearman:
+```R
+(Spearman <- 12*sum(cop-outer(linea,linea))*0.01^2)
+```
+![tabla](images/2Spearman.png)
+
+Medida de concordancia de Erdely:
+```R
+(Erdely <- 4*(max(cop-outer(linea,linea))-max(outer(linea,linea)-cop)))
+```
+![tabla](images/2Erdely.png)
 
 ### 3. 25 de marzo
 Simule una muestra aleatoria de tamaño n = 3000 a partir de un vector aleatorio (U,V) con marginales Uniformes(0,1) y cópula Clayton con parámetro 2. 
