@@ -111,24 +111,27 @@ curve(Concordancia2a,0,1,xname="Sp",xlab="Medida de concordancia Spearman")
 
 Medida de concordancia de Erdely:
 ```R
-Concordancia3<-function(a)
-{ 
-  Erdely1<-function(x) 
+linea <- seq(0,1,.01)
+cop <- matrix(nrow = length(linea), ncol=length(linea))
+
+Concordancia3 <- function(p)
+{
+  Erdely <- function(x,y,a)
     {
-      1*(a<=1-(1-a)*x[2])*(1-(1-a)*x[2]<=x[1])*(x[1]<=1)-x[1]*x[2]
+      if(x<=a*y) C <- x
+      if(a*y< x && x< 1-(1-a)*y) C <- a*y
+      if(1-(1-a)*y <= x ) C <- x+y-1
+      C
     }
+    
+  for(j in 1:length(linea)) cop[j,] <- sapply(linea, Erdely, x=linea[j], a=p)
   
-  Erdely2<-function(x) 
-    {
-      x[1]*x[2]-1*(a<=1-(1-a)*x[2])*(1-(1-a)*x[2]<=x[1])*(x[1]<=1)
-    }
-  
-  4*(optim(c(a,a),Erdely1,control=list(fnscale=-1))$value
-     - optim(c(1-a,1-a),Erdely2,control=list(fnscale=-1))$value)
+  4*(max(cop-outer(linea,linea))-max(outer(linea,linea)-cop))
 }
 
 Concordancia3a<-Vectorize(Concordancia3)
 curve(Concordancia3a,0,1,xname="Er",xlab="Medida de concordancia Erdely")
+
 ```
 ![Er](images/Concordancia3.png)
 
