@@ -54,18 +54,23 @@ curve(Medida2a,0,1,xname="H",xlab="Medida de dependencia Hoeffding")
 
 Medida de dependencia distancia supremo:
 ```R
-Medida3<-function(a)
-{ 
-  Supremo<-function(x) 
-    {
-      if(0<=x[1] && x[1]<=a*x[2] && a*x[2]<=a) C<-x[1]
-      if(0<=a*x[2] && a*x[2]<x[1] && x[1]<1-(1-a)*x[2]) C<-a*x[2]
-      if(a<=1-(1-a)*x[2] && 1-(1-a)*x[2]<=x[1] && x[1]<=1) C<-x[1]+x[2]-1
-      abs(C-x[1]*x[2])
-    }
+linea <- seq(0,1,.005)
+cop <- matrix(nrow = length(linea), ncol=length(linea))
+
+Medida3 <- function(p){
   
-  4*optim(c(.5,.5),Supremo,control=list(fnscale=-1))$value
+  Supremo <- function(x,y,a)
+  {
+    if(x<=a*y) C <- x
+    if(a*y< x && x< 1-(1-a)*y) C <- a*y
+    if(1-(1-a)*y <= x ) C <- x+y-1
+    C
   }
+  
+  for(j in 1:length(linea)) cop[j,] <- sapply(linea, Supremo, x=linea[j], a=p)
+  
+  4*max(abs(cop-outer(linea,linea)))
+}
 
 Medida3a<-Vectorize(Medida3)
 curve(Medida3a,0,1,n=300,xname="Sup",xlab="Medida de dependencia Supremo")
