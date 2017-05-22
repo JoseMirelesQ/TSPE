@@ -257,31 +257,31 @@ for(j in 1: length(linea))
 }
 ```
 
-SW
+Medida de dependencia Schweizer-Wolff:
 ```R
 (SW <- 12*sum(abs(cop-outer(linea,linea)))*(.01^2))
 ```
 ![tabla](images/3SW.png)
 
-Hoeffding
+Medida de dependencia Hoeffding:
 ```R
 (Hoeffding <- sqrt(90*sum((cop-outer(linea,linea))^2)*(.01^2)))
 ```
 ![tabla](images/3Hoef.png)
 
-Supremo
+Medida de dependencia distancia supremo:
 ```R
 (Supremo <- 4*max(abs(cop-outer(linea,linea))))
 ```
 ![tabla](images/3Supremo.png)
 
-Kendall
+Medida de concordancia de Kendall:
 ```R
 (Kendall <- 1-4*sum(W)*(.01^2))
 ```
 ![tabla](images/3Kendall.png)
 
-Kendall Muestral
+Medida de concordancia de Kendall Muestral:
 ```R
 concor<-sum(outer(X,X,function(x,y) x-y)*outer(Y,Y,function(x,y) x-y)>0)
 discor<-sum(outer(X,X,function(x,y) x-y)*outer(Y,Y,function(x,y) x-y)<0)
@@ -289,13 +289,13 @@ discor<-sum(outer(X,X,function(x,y) x-y)*outer(Y,Y,function(x,y) x-y)<0)
 ```
 ![tabla](images/3KendallMuestral.png)
 
-Spearman
+Medida de concordancia de Spearman:
 ```R
 (Spearman <- 12*sum(cop-outer(linea,linea))*(.01^2))
 ```
 ![tabla](images/3Spearman.png)
 
-Erdely
+Medida de concordancia de Erdely:
 ```R
 (Erdely <- 4*(max(cop-outer(linea,linea))-max(outer(linea,linea)-cop)))
 ```
