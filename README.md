@@ -416,11 +416,6 @@ Medida de concordancia de Erdely:
 ### 4. 25 de marzo
 Lo mismo del ejercicio anterior pero para (X,Y) pero con distribuciones marginales X ~ Pareto(1,1), Y ~ Cauchy(0,1). 
 ```R
-#[25-Mar] Lo mismo del ejercicio anterior pero para (X,Y) pero con distribuciones
-#marginales X ~ Pareto(1,1), Y ~ Cauchy(0,1). Calcule las medidas de dependencia 
-#de Schweizer-Wolff, Hoeffding y distancia supremo, asÃ­ como las medidas de 
-#concordancia de Kendall, Spearman y Erdely.
-
 #Funcion de distribucion de X
 FX <- function(x){
   (1-1/x)*(1<=x)
@@ -430,10 +425,12 @@ FY <- function(y){
   pcauchy(y)
 }
 
+#Funcion de distribucion conjunta 
 FXY <- function(x,y){
   Clay2(FX(x),FY(y))
 }
 
+#Funcion de distribucion condicional
 FY_X <- function(y,X=x){
   z <- 0
   if(FX(X)>0){
@@ -442,19 +439,21 @@ FY_X <- function(y,X=x){
   z
 }
 
+#Funcion de distribucion condicional inversa Y dado X=x
 FY_X_inv <- function(y,X=x){
   z <- 0
   if(y>.02 && y<.99){
-    z <- uniroot(function(w) FY_X(w,X) - y, lower =-1000,upper = 1000 )$root
+    z <- uniroot(function(w) FY_X(w,X) - y, lower =-1000/FX(X),upper = 1000/FX(X) )$root
   }
   if(y>.99){
     z <- 0
   }
   z
 }
+#Por cuestiones de computo los valores que tienden a infinito, mas alla de los cuantiles .02 y .99 se acumulan en el cero. 
 
-
-
+#Algoritmo para obtner la m.a. del vector (X,Y) especificado
+set.seed(0)
 U <- runif(3000)
 V <- runif(3000)
 
@@ -462,20 +461,63 @@ X <- 1/(1-U)
 Y <- vector(mode = "numeric", length = 3000)
 
 for(j in 1:3000){
-  x <- X[i]
+  x <- X[j]
   Y[j] <- FY_X_inv(V[j])
 }
 
-deltaX_C <- outer(X,X, function(x,y) x-y) 
-deltaY_C <- outer(Y,Y, function(x,y) x-y)
-deltaXY_C <- deltaX_C * deltaY_C
-
-c <- sum(deltaXY_C>0)
-d <- sum(deltaXY_C<0)
-
+#Histograma de X
 hist(X,probability = T,breaks = 10000,xlim = c(-1,60))
-hist(Y, xlim = c(-15,15),breaks = 100)
+
+#Histograma de Y 
+hist(Y, xlim = c(-15,15),breaks = 1000)
+
+#Grafica de dispersion
+plot(X,Y, xlim = c(-1,60),ylim = c(-15,15),main = "Grafica de dispersion (X,Y)")
 ```
 ![tabla](images/edad.png)
 
 Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
+
+Medida de dependencia Schweizer-Wolff:
+```R
+(SW <- 12*sum(abs(cop-outer(linea,linea)))*(.01^2))
+```
+![tabla](images/3SW.png)
+
+Medida de dependencia Hoeffding:
+```R
+(Hoeffding <- sqrt(90*sum((cop-outer(linea,linea))^2)*(.01^2)))
+```
+![tabla](images/3Hoef.png)
+
+Medida de dependencia distancia supremo:
+```R
+(Supremo <- 4*max(abs(cop-outer(linea,linea))))
+```
+![tabla](images/3Supremo.png)
+
+Medida de concordancia de Kendall:
+```R
+(Kendall <- 1-4*sum(W)*(.01^2))
+```
+![tabla](images/3Kendall.png)
+
+Medida de concordancia de Kendall Muestral:
+```R
+concor<-sum(outer(X,X,function(x,y) x-y)*outer(Y,Y,function(x,y) x-y)>0)
+discor<-sum(outer(X,X,function(x,y) x-y)*outer(Y,Y,function(x,y) x-y)<0)
+(Kendall.Muestral <- (concor-discor)/(concor+discor))
+```
+![tabla](images/3KendallMuestral.png)
+
+Medida de concordancia de Spearman:
+```R
+(Spearman <- 12*sum(cop-outer(linea,linea))*(.01^2))
+```
+![tabla](images/3Spearman.png)
+
+Medida de concordancia de Erdely:
+```R
+(Erdely <- 4*(max(cop-outer(linea,linea))-max(outer(linea,linea)-cop)))
+```
+![tabla](images/3Erdely.png)
