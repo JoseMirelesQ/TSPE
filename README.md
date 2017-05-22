@@ -193,65 +193,6 @@ curve(Concordancia3a,0,1,xname="Er",xlab="Medida de concordancia Erdely")
  
  plot(xi, yi, main = "Gráfica de disperción")
  
-# b) Histogramas de las densidades marginales.
- hist(xi,freq=F, breaks = 50)
- curve(dexp(x,rate=1), from = 0, to = 8, col="sienna", add = T)
- 
- hist(yi,freq=F, breaks = 50)
- curve(dgamma(x,shape=2), from = 0, to = 10, col="sienna", add = T)
- 
-# c) Conjuntos de nivel de la cópula subyacente C
- H <- seq(0,1,length=50)
- G <- seq(0,1,length=50)
- I <- matrix(0,50,50)
- for(i in 1:50){ I[,i] <- sapply(H,FUN=cop, x=G[i])}
- contour(H,G,I, main='Cópula subyacente', sub="Curvas de nivel",
-         xlab='U', ylab='V', nlevels = 20)
- image(H,G,I, main='Cópula subyacente', sub="Curvas de nivel",
-       xlab='U', ylab='V', col = heat.colors(20))
-
-# d) Conjuntos de nivel de C(u,v) - uv
- H <- seq(0,1,length=50)
- G <- seq(0,1,length=50)
- I <- matrix(0,50,50)
- for(i in 1:50){ I[,i] <- sapply(H,FUN=cop.dif, x=G[i])}
- contour(H,G,I, main='C(u,v) - uv', sub="Curvas de nivel",
-         xlab='X', ylab='Y', nlevels = 20)
- image(H,G,I, main='C(u,v) - uv', sub="Curvas de nivel",
-       xlab='X', ylab='Y', col = heat.colors(20))
- 
- # e.1) Medidas de dependencia:
- rej <- seq(0,1,by=0.01)
- C <- matrix(0,length(rej),length(rej))
- for(i in 1:length(rej)){C[,i] <- sapply(rej,FUN=cop, x=rej[i])}
-
- P <- matrix(0,length(rej),length(rej))
- for(i in 1:length(rej)){P[,i] <- sapply(rej,FUN=function(x,y) x*y,x=rej[i])}
- 
-      ## Schweizer-Wolff:
- SW <- 12*sum(abs(C-P)*0.01^2)
- SW
-      ## Hoeffding:
- H <- sqrt(90*sum((C-P)^2)*0.01^2)
- H
-      ## Distancia supremo:
- DS <- 4*max(abs(C-P))
- DS
- 
- # e.2) Medidas de concordancia: 
-      ## Kendall:
- X <- outer(xi,xi,FUN = function(x,y){x-y})
- Y <- outer(yi,yi,FUN = function(x,y){x-y})
- conc <- sum((X*Y)>0) 
- disc <- sum((X*Y)<0)      
- K <- (conc-disc)/(conc+disc)
- K
-      ## Spearman:
- S <- 12*sum(C-P)*0.01^2
- S
-      ## Erdely:
- E <- 4*(max(C-P)-max(P-C))
- E
 ```
 
 Considere un vector aleatorio (X,Y) con función de densidad conjunta de probabilidades del Ejemplo 1.7 de las notas sobre vectores aleatorios. Programando en R:
@@ -267,12 +208,75 @@ plot(xi,yi)
 ![Copula](images/cop2.png)
 
 b) Con los valores simulados de X obtenga un histograma en la escala adecuada para que encima grafique la densidad teórica marginal de X. Lo mismo para Y.
+```R
+hist(xi,freq=F, breaks = 50)
+curve(dexp(x,rate=1), from = 0, to = 8, col="sienna", add = T)
+ 
+hist(yi,freq=F, breaks = 50)
+curve(dgamma(x,shape=2), from = 0, to = 10, col="sienna", add = T) 
+```
 
 c) Obtenga gráficas de los conjuntos de nivel de la cópula subyacente C mediante las funciones contour e image.
+```R
+H <- seq(0,1,length=50)
+G <- seq(0,1,length=50)
+I <- matrix(0,50,50)
+for(i in 1:50){ I[,i] <- sapply(H,FUN=cop, x=G[i])}
+contour(H,G,I, main='Cópula subyacente', sub="Curvas de nivel",
+        xlab='U', ylab='V', nlevels = 20)
+image(H,G,I, main='Cópula subyacente', sub="Curvas de nivel",
+      xlab='U', ylab='V', col = heat.colors(20))
+```
 
 d) Igual que en el inciso anterior pero de C(u,v) - uv.
+```R
+H <- seq(0,1,length=50)
+G <- seq(0,1,length=50)
+I <- matrix(0,50,50)
+for(i in 1:50){ I[,i] <- sapply(H,FUN=cop.dif, x=G[i])}
+contour(H,G,I, main='C(u,v) - uv', sub="Curvas de nivel",
+        xlab='X', ylab='Y', nlevels = 20)
+image(H,G,I, main='C(u,v) - uv', sub="Curvas de nivel",
+      xlab='X', ylab='Y', col = heat.colors(20))
+```
 
 e) Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
+```R
+#Código
+# e.1) Medidas de dependencia:
+rej <- seq(0,1,by=0.01)
+C <- matrix(0,length(rej),length(rej))
+for(i in 1:length(rej)){C[,i] <- sapply(rej,FUN=cop, x=rej[i])}
+
+P <- matrix(0,length(rej),length(rej))
+for(i in 1:length(rej)){P[,i] <- sapply(rej,FUN=function(x,y) x*y,x=rej[i])}
+ 
+     ## Schweizer-Wolff:
+SW <- 12*sum(abs(C-P)*0.01^2)
+SW
+     ## Hoeffding:
+H <- sqrt(90*sum((C-P)^2)*0.01^2)
+H
+     ## Distancia supremo:
+DS <- 4*max(abs(C-P))
+DS
+ 
+ # e.2) Medidas de concordancia: 
+     ## Kendall:
+X <- outer(xi,xi,FUN = function(x,y){x-y})
+Y <- outer(yi,yi,FUN = function(x,y){x-y})
+conc <- sum((X*Y)>0) 
+disc <- sum((X*Y)<0)      
+K <- (conc-disc)/(conc+disc)
+K
+      ## Spearman:
+S <- 12*sum(C-P)*0.01^2
+S
+      ## Erdely:
+E <- 4*(max(C-P)-max(P-C))
+E
+```
+
 ```R
 #b) Con los valores simulados de X obtenga un histograma en la 
 #escala adecuada para que encima grafique la densidad teórica 
@@ -415,7 +419,8 @@ Medida de concordancia de Erdely:
 
 ### 4. 25 de marzo
 Lo mismo del ejercicio anterior pero para (X,Y) pero con distribuciones marginales X ~ Pareto(1,1), Y ~ Cauchy(0,1). 
-```R#Copula Clayton theta=2
+```R
+#Copula Clayton
 Clayton <- function(u,v){
   (max(u^(-2)+v^(-2)-1,0)^(-1/2))*(0<u && u <=1)*(0<v && v <=1)
 } 
@@ -434,7 +439,7 @@ FXY <- function(x,y){
   Clayton(FX(x),FY(y))
 }
 
-#Funcion de distribucion condicional
+#Distribución condicional Y|X=x
 FY_X <- function(y,X=x){
   z <- 0
   if(FX(X)>0){
@@ -443,7 +448,7 @@ FY_X <- function(y,X=x){
   z
 }
 
-#Funcion de distribucion condicional inversa Y dado X=x
+#Funcion condicional inversa de Y|X=x
 FY_X_inv <- function(y,X=x){
   z <- 0
   if(y>.02 && y<.99){
@@ -454,10 +459,7 @@ FY_X_inv <- function(y,X=x){
   }
   z
 }
-#Por cuestiones de computo los valores que tienden a infinito, 
-#mas alla de los cuantiles .02 y .99 se acumulan en el cero. 
 
-#Algoritmo para obtner la m.a. del vector (X,Y) especificado
 set.seed(0)
 U <- runif(3000)
 V <- runif(3000)
@@ -491,7 +493,6 @@ plot(X,Y, xlim = c(-1,60),ylim = c(-15,15),main = "Grafica de dispersion (X,Y)")
 
 Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
 ```R
-#Medidas de dependencia y concordancia, concuerdan con las anteriores por estar solo en funcion de la copula subyacente
 linea <- seq(0,1,.01)
 cop <- matrix(nrow = length(linea), ncol = length(linea))
 W <- matrix(nrow = length(linea), ncol = length(linea))
@@ -501,7 +502,7 @@ for(j in 1:length(linea))
   cop[j,] <- sapply(linea, Clayton, u=linea[j])
 }
 
-#Producto de las parciales de la copula Clayton
+#Producto de las parciales de la cópula Clayton
 Clayton_der <- function(u,v)
 {
   z <- 0
