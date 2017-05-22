@@ -2,7 +2,7 @@
 
 # Segundo Examen Parcial
 
-### 16 de marzo
+### 1. 16 de marzo
 Analizar la deducción de la cópula subyacente en el Ejemplo 3.3 del libro de Nelsen y calcular en función del parámetro de dicha cópula las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely. Luego graficar juntas todas las medidas de dependencia y concordancia como funciones del parámetro.
 
 ```R
@@ -141,7 +141,7 @@ curve(Concordancia3a,0,1,xname="Er",xlab="Medida de concordancia Erdely")
 ![Er](images/Concordancia3.png)
 
 
-### 17 de marzo
+### 2. 17 de marzo
 Considere un vector aleatorio (X,Y) con función de densidad conjunta de probabilidades del Ejemplo 1.7 de las notas sobre vectores aleatorios. Programando en R:
 
 a) Simule una muestra aleatoria de (X,Y) de tamaño n = 3000 y realice un gráfico de dispersión.
@@ -176,7 +176,7 @@ curve(dgamma(x,2,1),from=min(yi),to=max(yi),add=T)
 ```
 ![Sexo](images/sexo.png)
 
-### 25 de marzo
+### 3. 25 de marzo
 Simule una muestra aleatoria de tamaño n = 3000 a partir de un vector aleatorio (U,V) con marginales Uniformes(0,1) y cópula Clayton con parámetro 2. 
 ```R
 #Copula Clayton
@@ -301,10 +301,69 @@ Medida de concordancia de Erdely:
 ```
 ![tabla](images/3Erdely.png)
 
-### 25 de marzo
-Lo mismo del ejercicio anterior pero para (X,Y) pero con distribuciones marginales X ~ Pareto(1,1), Y ~ Cauchy(0,1). Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
+### 4. 25 de marzo
+Lo mismo del ejercicio anterior pero para (X,Y) pero con distribuciones marginales X ~ Pareto(1,1), Y ~ Cauchy(0,1). 
 ```R
-#Código
+#[25-Mar] Lo mismo del ejercicio anterior pero para (X,Y) pero con distribuciones
+#marginales X ~ Pareto(1,1), Y ~ Cauchy(0,1). Calcule las medidas de dependencia 
+#de Schweizer-Wolff, Hoeffding y distancia supremo, asÃ­ como las medidas de 
+#concordancia de Kendall, Spearman y Erdely.
+
+#Funcion de distribucion de X
+FX <- function(x){
+  (1-1/x)*(1<=x)
+}
+
+FY <- function(y){
+  pcauchy(y)
+}
+
+FXY <- function(x,y){
+  Clay2(FX(x),FY(y))
+}
+
+FY_X <- function(y,X=x){
+  z <- 0
+  if(FX(X)>0){
+    z <- FXY(x,y)/FX(X)
+  }
+  z
+}
+
+FY_X_inv <- function(y,X=x){
+  z <- 0
+  if(y>.02 && y<.99){
+    z <- uniroot(function(w) FY_X(w,X) - y, lower =-1000,upper = 1000 )$root
+  }
+  if(y>.99){
+    z <- 0
+  }
+  z
+}
+
+
+
+U <- runif(3000)
+V <- runif(3000)
+
+X <- 1/(1-U)
+Y <- vector(mode = "numeric", length = 3000)
+
+for(j in 1:3000){
+  x <- X[i]
+  Y[j] <- FY_X_inv(V[j])
+}
+
+deltaX_C <- outer(X,X, function(x,y) x-y) 
+deltaY_C <- outer(Y,Y, function(x,y) x-y)
+deltaXY_C <- deltaX_C * deltaY_C
+
+c <- sum(deltaXY_C>0)
+d <- sum(deltaXY_C<0)
+
+hist(X,probability = T,breaks = 10000,xlim = c(-1,60))
+hist(Y, xlim = c(-15,15),breaks = 100)
 ```
 ![tabla](images/edad.png)
-       
+
+Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
