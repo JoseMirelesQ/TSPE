@@ -415,7 +415,11 @@ Medida de concordancia de Erdely:
 
 ### 4. 25 de marzo
 Lo mismo del ejercicio anterior pero para (X,Y) pero con distribuciones marginales X ~ Pareto(1,1), Y ~ Cauchy(0,1). 
-```R
+```R#Copula Clayton theta=2
+Clayton <- function(u,v){
+  (max(u^(-2)+v^(-2)-1,0)^(-1/2))*(0<u && u <=1)*(0<v && v <=1)
+} 
+
 #Funcion de distribucion de X
 FX <- function(x){
   (1-1/x)*(1<=x)
@@ -427,7 +431,7 @@ FY <- function(y){
 
 #Funcion de distribucion conjunta 
 FXY <- function(x,y){
-  Clay2(FX(x),FY(y))
+  Clayton(FX(x),FY(y))
 }
 
 #Funcion de distribucion condicional
@@ -450,7 +454,8 @@ FY_X_inv <- function(y,X=x){
   }
   z
 }
-#Por cuestiones de computo los valores que tienden a infinito, mas alla de los cuantiles .02 y .99 se acumulan en el cero. 
+#Por cuestiones de computo los valores que tienden a infinito, 
+#mas alla de los cuantiles .02 y .99 se acumulan en el cero. 
 
 #Algoritmo para obtner la m.a. del vector (X,Y) especificado
 set.seed(0)
@@ -460,23 +465,56 @@ V <- runif(3000)
 X <- 1/(1-U)
 Y <- vector(mode = "numeric", length = 3000)
 
-for(j in 1:3000){
+for(j in 1:length(U)){
   x <- X[j]
   Y[j] <- FY_X_inv(V[j])
 }
+```
 
-#Histograma de X
-hist(X,probability = T,breaks = 10000,xlim = c(-1,60))
+Histograma de X
+```R
+hist(X,probability = T,breaks = 10000,xlim = c(-1,30))
+```
+![tabla](images/4histX.png)
 
-#Histograma de Y 
-hist(Y, xlim = c(-15,15),breaks = 1000)
+Histograma de Y
+```R
+hist(Y, xlim = c(-15,15),breaks = 5000)
+```
+![tabla](images/4histY.png)
 
-#Grafica de dispersion
+Grafica de dispersion
+```R
 plot(X,Y, xlim = c(-1,60),ylim = c(-15,15),main = "Grafica de dispersion (X,Y)")
 ```
-![tabla](images/edad.png)
+![tabla](images/4disp.png)
 
 Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
+```R
+#Medidas de dependencia y concordancia, concuerdan con las anteriores por estar solo en funcion de la copula subyacente
+linea <- seq(0,1,.01)
+cop <- matrix(nrow = length(linea), ncol = length(linea))
+W <- matrix(nrow = length(linea), ncol = length(linea))
+
+for(j in 1:length(linea))
+{
+  cop[j,] <- sapply(linea, Clayton, u=linea[j])
+}
+
+#Producto de las parciales de la copula Clayton
+Clayton_der <- function(u,v)
+{
+  z <- 0
+  if(0<u && 0<v)
+    z <- max(0,(u^(-2)+v^(-2)-1)^(-3/2)*u^(-3))*max(0,(u^(-2)+v^(-2)-1)^(-3/2)*v^(-3))
+  z
+}
+
+for(j in 1: length(linea))
+{
+  W[j,] <- sapply(linea, Clayton_der, u=linea[j])
+}
+```
 
 Medida de dependencia Schweizer-Wolff:
 ```R
