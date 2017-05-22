@@ -142,6 +142,118 @@ curve(Concordancia3a,0,1,xname="Er",xlab="Medida de concordancia Erdely")
 
 
 ### 2. 17 de marzo
+```R
+# Función de distribución conjunta del Ejemplo 1.7 de las notas sobre vec. al.
+ Fxy <- function(x,y){
+       if (x<Inf && y<Inf){
+           g <- (1- exp(-x) - x*exp(-y))*(0<x)*(x<y) +
+                (1- exp(-y) - y*exp(-y))*(0<y)*(y<=x)
+       }
+       if (x==Inf && y<Inf){
+           g <- (1- exp(-y) - y*exp(-y))*(0<y)
+       }
+       if (x<Inf && y==Inf){
+           g <- (1-exp(-x))*(0<x)
+       }
+       if (x==Inf && y==Inf){
+           g <- 1
+       }
+       g
+ }
+
+# Inversa de la marginal de X.
+ fxi <- function(x){
+       if (x < 1){-log(1-x)}
+       else {Inf}
+ }
+ 
+# Inversa de marginal de Y.
+ fyi <- function(y){
+       if (y < 1){
+             uniroot(function(z){pgamma(z,2,1)-y},lower=0,upper=7)$root
+       }
+       else {Inf}
+ }
+       
+# Inversa de la condicional de Y|X.
+ fyxi <- function(v,x){x - log(1-v)}
+ 
+# Cópula subyacente
+ cop <- function(x,y){Fxy(fxi(x),fyi(y))}
+ 
+# C(u,v) - uv
+ cop.dif <- function(x,y){cop(x,y)-x*y}
+
+# a) Simule una m.a. de (X,Y) y realice un gráfico de dispersión.
+ n <- 3000
+ u <- runif(n)
+ xi <- sapply(u,fxi)
+ v <- runif(n)
+ yi <- fyxi(v,xi)
+ 
+ plot(xi, yi, main = "Gráfica de disperción")
+ 
+# b) Histogramas de las densidades marginales.
+ hist(xi,freq=F, breaks = 50)
+ curve(dexp(x,rate=1), from = 0, to = 8, col="sienna", add = T)
+ 
+ hist(yi,freq=F, breaks = 50)
+ curve(dgamma(x,shape=2), from = 0, to = 10, col="sienna", add = T)
+ 
+# c) Conjuntos de nivel de la cópula subyacente C
+ H <- seq(0,1,length=50)
+ G <- seq(0,1,length=50)
+ I <- matrix(0,50,50)
+ for(i in 1:50){ I[,i] <- sapply(H,FUN=cop, x=G[i])}
+ contour(H,G,I, main='Cópula subyacente', sub="Curvas de nivel",
+         xlab='U', ylab='V', nlevels = 20)
+ image(H,G,I, main='Cópula subyacente', sub="Curvas de nivel",
+       xlab='U', ylab='V', col = heat.colors(20))
+
+# d) Conjuntos de nivel de C(u,v) - uv
+ H <- seq(0,1,length=50)
+ G <- seq(0,1,length=50)
+ I <- matrix(0,50,50)
+ for(i in 1:50){ I[,i] <- sapply(H,FUN=cop.dif, x=G[i])}
+ contour(H,G,I, main='C(u,v) - uv', sub="Curvas de nivel",
+         xlab='X', ylab='Y', nlevels = 20)
+ image(H,G,I, main='C(u,v) - uv', sub="Curvas de nivel",
+       xlab='X', ylab='Y', col = heat.colors(20))
+ 
+ # e.1) Medidas de dependencia:
+ rej <- seq(0,1,by=0.01)
+ C <- matrix(0,length(rej),length(rej))
+ for(i in 1:length(rej)){C[,i] <- sapply(rej,FUN=cop, x=rej[i])}
+
+ P <- matrix(0,length(rej),length(rej))
+ for(i in 1:length(rej)){P[,i] <- sapply(rej,FUN=function(x,y) x*y,x=rej[i])}
+ 
+      ## Schweizer-Wolff:
+ SW <- 12*sum(abs(C-P)*0.01^2)
+ SW
+      ## Hoeffding:
+ H <- sqrt(90*sum((C-P)^2)*0.01^2)
+ H
+      ## Distancia supremo:
+ DS <- 4*max(abs(C-P))
+ DS
+ 
+ # e.2) Medidas de concordancia: 
+      ## Kendall:
+ X <- outer(xi,xi,FUN = function(x,y){x-y})
+ Y <- outer(yi,yi,FUN = function(x,y){x-y})
+ conc <- sum((X*Y)>0) 
+ disc <- sum((X*Y)<0)      
+ K <- (conc-disc)/(conc+disc)
+ K
+      ## Spearman:
+ S <- 12*sum(C-P)*0.01^2
+ S
+      ## Erdely:
+ E <- 4*(max(C-P)-max(P-C))
+ E
+```
+
 Considere un vector aleatorio (X,Y) con función de densidad conjunta de probabilidades del Ejemplo 1.7 de las notas sobre vectores aleatorios. Programando en R:
 
 a) Simule una muestra aleatoria de (X,Y) de tamaño n = 3000 y realice un gráfico de dispersión.
