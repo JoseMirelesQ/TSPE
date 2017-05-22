@@ -177,42 +177,127 @@ curve(dgamma(x,2,1),from=min(yi),to=max(yi),add=T)
 ![Sexo](images/sexo.png)
 
 ### 25 de marzo
-Simule una muestra aleatoria de tamaño n = 3000 a partir de un vector aleatorio (U,V) con marginales Uniformes(0,1) y cópula Clayton con parámetro 2. Realice gráficas de histogramas marginales y uno de dispersión. Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
+Simule una muestra aleatoria de tamaño n = 3000 a partir de un vector aleatorio (U,V) con marginales Uniformes(0,1) y cópula Clayton con parámetro 2. 
 ```R
-ui<-runif(10)->xi
-vi<-runif(10)
-#vi<-
-  
+#Copula Clayton
 Clayton<-function(u,v)
 {
   (max(u^(-2)+v^(-2)-1,0))^(-1/2)
 }
 
-FVlU<-function(v,u)
+#Distribución condicional Y|X=x
+FYlx <-function(y,X=x)
 {
-  ((max(u^(-2)+v^(-2)-1,0))^(-1/2))/u
+  z <- 0
+  if(0<x) z <- (Clayton(x,y)/X)
+  z
 }
 
-FV_inv <- function(v,u){
-  
-  uniroot(function(x) FVlU(x,u)-v, interval = c(0,1))$root
-  
+#Funcion condicional inversa de Y|X=x
+FYlx_inv <- function(z,X=x)
+{
+  uniroot(function(w) FYlx(w,X) - z,interval = c(0,1))$root
 }
 
-yi<-vector(mode='numeric',length = length(ui))
+U <- runif(3000)
+V <- runif(3000)
+X <- U
+Y <- vector(mode = "numeric", length = 3000)
 
-for(i in 1:length(ui)) yi[i]<-FV_inv(vi[i],xi[i])
+for(i in 1:length(X))
+{
+  x <- X[i]
+  Y[i] <- FYlx_inv(V[i])
+}
 
-plot(ui,yi)
+```
+Realice gráficas de histogramas marginales y uno de dispersión.
+
+Distribución de X
+```R
+hist(X,probability = T)
+```
+![Copula](images/distX.png)
+
+Distribución de Y
+```R
+hist(Y,probability = T)
+```
+![Copula](images/distY.png)
+
+Dispersión (X,Y)
+```R
+plot(X,Y)
 ```
 ![Copula](images/cop1.png)
 
+Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
 ```R
-concor<-sum(outer(yi,yi,function(x,y) x-y)*outer(ui,ui,function(x,y) x-y)>0)
-discor<-sum(outer(yi,yi,function(x,y) x-y)*outer(ui,ui,function(x,y) x-y)<0)
+linea <- seq(0,1,.01)
+cop <- matrix(nrow = length(linea), ncol = length(linea))
+W <- matrix(nrow = length(linea), ncol = length(linea))
 
-(concor-discor)/(concor+discor)
+for(j in 1: length(linea))
+{
+  cop[j,] <- sapply(linea, Clayton, u=linea[j])
+}
 
+#Producto de las parciales de la copula Clayton
+Clayton_der <- function(u,v)
+{
+  z <- 0
+  if(0<u && 0<v)
+    z <- max(0,(u^(-2)+v^(-2)-1)^(-3/2)*u^(-3))*max(0,(u^(-2)+v^(-2)-1)^(-3/2)*v^(-3))
+  z
+}
+
+for(j in 1: length(linea))
+{
+  W[j,] <- sapply(linea, Clayton_der, u=linea[j])
+}
+```
+
+SW
+```R
+(SW <- 12*sum(abs(cop-outer(linea,linea)))*(.01^2))
+```
+![tabla](images/edad.png)
+
+Hoeffding
+```R
+(Hoeffding <- sqrt(90*sum((cop-outer(linea,linea))^2)*(.01^2)))
+```
+![tabla](images/edad.png)
+
+Supremo
+```R
+(Supremo <- 4*max(abs(cop-outer(linea,linea))))
+```
+![tabla](images/edad.png)
+
+Kendall
+```R
+(Kendall <- 1-4*sum(W)*(.01^2))
+```
+![tabla](images/edad.png)
+
+Kendall Muestral
+```R
+concor<-sum(outer(X,X,function(x,y) x-y)*outer(Y,Y,function(x,y) x-y)>0)
+discor<-sum(outer(X,X,function(x,y) x-y)*outer(Y,Y,function(x,y) x-y)<0)
+(Kendall.Muestral <- (concor-discor)/(concor+discor))
+```
+![tabla](images/edad.png)
+
+Spearman
+```R
+(Spearman <- 12*sum(cop-outer(linea,linea))*(.01^2))
+```
+![tabla](images/edad.png)
+
+Erdely
+```R
+(Erdely <- 4*(max(cop-outer(linea,linea))-max(outer(linea,linea)-cop)))
 ```
 ![tabla](images/edad.png)
 
