@@ -261,25 +261,25 @@ SW
 ```R
 (SW <- 12*sum(abs(cop-outer(linea,linea)))*(.01^2))
 ```
-![tabla](images/edad.png)
+![tabla](images/3SW.png)
 
 Hoeffding
 ```R
 (Hoeffding <- sqrt(90*sum((cop-outer(linea,linea))^2)*(.01^2)))
 ```
-![tabla](images/edad.png)
+![tabla](images/3Hoef.png)
 
 Supremo
 ```R
 (Supremo <- 4*max(abs(cop-outer(linea,linea))))
 ```
-![tabla](images/edad.png)
+![tabla](images/3Supremo.png)
 
 Kendall
 ```R
 (Kendall <- 1-4*sum(W)*(.01^2))
 ```
-![tabla](images/edad.png)
+![tabla](images/3Kendall.png)
 
 Kendall Muestral
 ```R
@@ -287,19 +287,19 @@ concor<-sum(outer(X,X,function(x,y) x-y)*outer(Y,Y,function(x,y) x-y)>0)
 discor<-sum(outer(X,X,function(x,y) x-y)*outer(Y,Y,function(x,y) x-y)<0)
 (Kendall.Muestral <- (concor-discor)/(concor+discor))
 ```
-![tabla](images/edad.png)
+![tabla](images/3KendallMuestral.png)
 
 Spearman
 ```R
 (Spearman <- 12*sum(cop-outer(linea,linea))*(.01^2))
 ```
-![tabla](images/edad.png)
+![tabla](images/3Spearman.png)
 
 Erdely
 ```R
 (Erdely <- 4*(max(cop-outer(linea,linea))-max(outer(linea,linea)-cop)))
 ```
-![tabla](images/edad.png)
+![tabla](images/3Erdely.png)
 
 ### 25 de marzo
 Lo mismo del ejercicio anterior pero para (X,Y) pero con distribuciones marginales X ~ Pareto(1,1), Y ~ Cauchy(0,1). Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
