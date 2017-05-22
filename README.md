@@ -142,155 +142,152 @@ curve(Concordancia3a,0,1,xname="Er",xlab="Medida de concordancia Erdely")
 
 
 ### 2. 17 de marzo
-```R
-# Función de distribución conjunta del Ejemplo 1.7 de las notas sobre vec. al.
- Fxy <- function(x,y){
-       if (x<Inf && y<Inf){
-           g <- (1- exp(-x) - x*exp(-y))*(0<x)*(x<y) +
-                (1- exp(-y) - y*exp(-y))*(0<y)*(y<=x)
-       }
-       if (x==Inf && y<Inf){
-           g <- (1- exp(-y) - y*exp(-y))*(0<y)
-       }
-       if (x<Inf && y==Inf){
-           g <- (1-exp(-x))*(0<x)
-       }
-       if (x==Inf && y==Inf){
-           g <- 1
-       }
-       g
- }
-
-# Inversa de la marginal de X.
- fxi <- function(x){
-       if (x < 1){-log(1-x)}
-       else {Inf}
- }
- 
-# Inversa de marginal de Y.
- fyi <- function(y){
-       if (y < 1){
-             uniroot(function(z){pgamma(z,2,1)-y},lower=0,upper=7)$root
-       }
-       else {Inf}
- }
-       
-# Inversa de la condicional de Y|X.
- fyxi <- function(v,x){x - log(1-v)}
- 
-# Cópula subyacente
- cop <- function(x,y){Fxy(fxi(x),fyi(y))}
- 
-# C(u,v) - uv
- cop.dif <- function(x,y){cop(x,y)-x*y}
-
-# a) Simule una m.a. de (X,Y) y realice un gráfico de dispersión.
- n <- 3000
- u <- runif(n)
- xi <- sapply(u,fxi)
- v <- runif(n)
- yi <- fyxi(v,xi)
- 
- plot(xi, yi, main = "Gráfica de disperción")
- 
-```
-
 Considere un vector aleatorio (X,Y) con función de densidad conjunta de probabilidades del Ejemplo 1.7 de las notas sobre vectores aleatorios. Programando en R:
+```R
+#Función de distribución conjunta FXY
+Fxy <- function(x,y){
+  if (x<Inf && y<Inf){
+    z <- (1- exp(-x) - x*exp(-y))*(0<x)*(x<y) +
+      (1- exp(-y) - y*exp(-y))*(0<y)*(y<=x)
+  }
+  if (x==Inf && y<Inf){
+    z <- (1- exp(-y) - y*exp(-y))*(0<y)
+  }
+  if (x<Inf && y==Inf){
+    z <- (1-exp(-x))*(0<x)
+  }
+  if (x==Inf && y==Inf){
+    z <- 1
+  }
+  z
+}
+
+#Inversa de la marginal de X.
+fxi_inv <- function(x){
+  if (x < 1){-log(1-x)}
+  else {Inf}
+}
+```
 
 a) Simule una muestra aleatoria de (X,Y) de tamaño n = 3000 y realice un gráfico de dispersión.
 ```R
 ui<-runif(3000,0,1)
-xi<--log(1-ui)
+xi <- sapply(ui,fxi_inv)
 vi<-runif(3000,0,1)
 yi<-xi-log(1-vi)
-plot(xi,yi)
+
+plot(xi, yi)
 ```
 ![Copula](images/cop2.png)
 
 b) Con los valores simulados de X obtenga un histograma en la escala adecuada para que encima grafique la densidad teórica marginal de X. Lo mismo para Y.
+
+Histograma de X:
 ```R
-hist(xi,freq=F, breaks = 50)
-curve(dexp(x,rate=1), from = 0, to = 8, col="sienna", add = T)
- 
-hist(yi,freq=F, breaks = 50)
-curve(dgamma(x,shape=2), from = 0, to = 10, col="sienna", add = T) 
+hist(xi,freq=F,breaks=100)
+curve(dexp(x,rate=1), from=min(xi), to=max(xi), add = T)
 ```
+![Copula](images/2histX.png)
+
+Histograma de Y:
+```R
+hist(yi,freq=F,breaks=100)
+curve(dgamma(x,shape=2), from=min(yi), to=max(yi), add = T)
+```
+![Copula](images/2histY.png)
 
 c) Obtenga gráficas de los conjuntos de nivel de la cópula subyacente C mediante las funciones contour e image.
 ```R
+#Inversa de marginal de Y.
+fyi_inv <- function(y)
+{
+  if (y < 1){
+    uniroot(function(z){pgamma(z,2,1)-y},lower=0,upper=7)$root
+  }
+  else {Inf}
+}
+
+#Cópula subyacente
+cop.sub <- function(x,y) Fxy(fxi_inv(x),fyi_inv(y))
+
 H <- seq(0,1,length=50)
 G <- seq(0,1,length=50)
 I <- matrix(0,50,50)
-for(i in 1:50){ I[,i] <- sapply(H,FUN=cop, x=G[i])}
+for(i in 1:50){ I[,i] <- sapply(H,FUN=cop.sub, x=G[i])}
+```
+
+Curvas de nivel mediante contour:
+```R
 contour(H,G,I, main='Cópula subyacente', sub="Curvas de nivel",
         xlab='U', ylab='V', nlevels = 20)
+```
+![Copula](images/2curva1.png)
+
+Curvas de nivel mediante image:
+```R
 image(H,G,I, main='Cópula subyacente', sub="Curvas de nivel",
       xlab='U', ylab='V', col = heat.colors(20))
 ```
+![Copula](images/2curva2.png)
 
 d) Igual que en el inciso anterior pero de C(u,v) - uv.
 ```R
+#C(u,v) - uv
+cop.dif <- function(x,y) cop.sub(x,y)-x*y
+
 H <- seq(0,1,length=50)
 G <- seq(0,1,length=50)
 I <- matrix(0,50,50)
 for(i in 1:50){ I[,i] <- sapply(H,FUN=cop.dif, x=G[i])}
+```
+
+Curvas de nivel mediante contour:
+```R
 contour(H,G,I, main='C(u,v) - uv', sub="Curvas de nivel",
         xlab='X', ylab='Y', nlevels = 20)
+```
+![Copula](images/2curva3.png)
+
+Curvas de nivel mediante image:
+```R
 image(H,G,I, main='C(u,v) - uv', sub="Curvas de nivel",
       xlab='X', ylab='Y', col = heat.colors(20))
 ```
+![Copula](images/2curva4.png)
 
 e) Calcule las medidas de dependencia de Schweizer-Wolff, Hoeffding y distancia supremo, así como las medidas de concordancia de Kendall, Spearman y Erdely.
 ```R
-#Código
-# e.1) Medidas de dependencia:
-rej <- seq(0,1,by=0.01)
-C <- matrix(0,length(rej),length(rej))
-for(i in 1:length(rej)){C[,i] <- sapply(rej,FUN=cop, x=rej[i])}
 
-P <- matrix(0,length(rej),length(rej))
-for(i in 1:length(rej)){P[,i] <- sapply(rej,FUN=function(x,y) x*y,x=rej[i])}
- 
-     ## Schweizer-Wolff:
-SW <- 12*sum(abs(C-P)*0.01^2)
+linea <- seq(0,1,by=0.01)
+cop <- matrix(0,length(linea),length(linea))
+
+for(i in 1:length(linea))
+{
+  cop[,i] <- sapply(linea,FUN=cop.sub, x=linea[i])
+}
+
+## Schweizer-Wolff:
+SW <- 12*sum(abs(cop-outer(linea,linea))*0.01^2)
 SW
-     ## Hoeffding:
-H <- sqrt(90*sum((C-P)^2)*0.01^2)
+## Hoeffding:
+H <- sqrt(90*sum((cop-outer(linea,linea))^2)*0.01^2)
 H
-     ## Distancia supremo:
-DS <- 4*max(abs(C-P))
+## Distancia supremo:
+DS <- 4*max(abs(cop-outer(linea,linea)))
 DS
- 
- # e.2) Medidas de concordancia: 
-     ## Kendall:
-X <- outer(xi,xi,FUN = function(x,y){x-y})
-Y <- outer(yi,yi,FUN = function(x,y){x-y})
-conc <- sum((X*Y)>0) 
-disc <- sum((X*Y)<0)      
-K <- (conc-disc)/(conc+disc)
+
+## Kendall:
+concor<-sum(outer(xi,xi,function(x,y) x-y)*outer(yi,yi,function(x,y) x-y)>0)
+discor<-sum(outer(xi,xi,function(x,y) x-y)*outer(yi,yi,function(x,y) x-y)<0)
+K <- (concor-discor)/(concor+discor)
 K
-      ## Spearman:
-S <- 12*sum(C-P)*0.01^2
+## Spearman:
+S <- 12*sum(cop-outer(linea,linea))*0.01^2
 S
-      ## Erdely:
-E <- 4*(max(C-P)-max(P-C))
+## Erdely:
+E <- 4*(max(cop-outer(linea,linea))-max(outer(linea,linea)-cop))
 E
 ```
-
-```R
-#b) Con los valores simulados de X obtenga un histograma en la 
-#escala adecuada para que encima grafique la densidad teórica 
-#marginal de X. Lo mismo para Y.
-hist(xi,prob=T)
-curve(dexp(x),from=min(xi),to=max(xi),add=T)
-
-?uniroot()
-
-hist(yi,prob=T)
-curve(dgamma(x,2,1),from=min(yi),to=max(yi),add=T)
-
-```
-![Sexo](images/sexo.png)
 
 ### 3. 25 de marzo
 Simule una muestra aleatoria de tamaño n = 3000 a partir de un vector aleatorio (U,V) con marginales Uniformes(0,1) y cópula Clayton con parámetro 2. 
